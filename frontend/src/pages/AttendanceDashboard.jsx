@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import attendanceService from '../services/attendanceService';
 import AttendanceCard from '../components/AttendanceCard';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -14,8 +14,12 @@ const AttendanceDashboard = () => {
   });
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Use useCallback to memoize the filter function
-  const filterAttendance = useCallback(() => {
+  useEffect(() => {
+    loadAttendance();
+  }, []);
+
+  useEffect(() => {
+    // Filter logic moved directly inside useEffect
     let filtered = [...attendance];
 
     // Apply filters
@@ -39,15 +43,7 @@ const AttendanceDashboard = () => {
     }
 
     setFilteredAttendance(filtered);
-  }, [attendance, filters, searchTerm]);
-
-  useEffect(() => {
-    loadAttendance();
-  }, []);
-
-  useEffect(() => {
-    filterAttendance();
-  }, [filterAttendance]); // Now filterAttendance is stable due to useCallback
+  }, [attendance, filters, searchTerm]); // Now all dependencies are properly declared
 
   const loadAttendance = async () => {
     try {
